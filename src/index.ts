@@ -4,6 +4,56 @@ import { testTreeTraversal } from './tests/treeTest';
 import { testLongestIncreasingSubsequence } from './tests/lisTest';
 import { testConstructors } from './tests/constructorTest';
 import { testCurry } from './tests/curryTest';
+import { sourceCodeMap } from './sourceCodes';
+
+// 源码文件类型映射
+const SOURCE_CODE_KEYS = {
+  'LRUCache': 'LRUCache',
+  'TreeNode': 'TreeNode',
+  'LIS': 'LIS',
+  'Constructor': 'Constructor',
+  'Curry': 'Curry'
+};
+
+/**
+ * 显示源代码到输出区域
+ * @param output 输出容器
+ * @param sourceKey 源代码键名
+ */
+function showSourceCode(output: HTMLElement, sourceKey: string): void {
+  try {
+    const code = sourceCodeMap[sourceKey];
+    if (!code) {
+      throw new Error(`未找到源代码: ${sourceKey}`);
+    }
+    
+    const codeBlock = document.createElement('div');
+    codeBlock.className = 'source-code';
+    codeBlock.innerHTML = `
+      <h3>源代码</h3>
+      <pre><code>${escapeHtml(code)}</code></pre>
+    `;
+    
+    output.appendChild(codeBlock);
+  } catch (error: any) {
+    console.error('显示源代码出错:', error);
+    const errorBlock = document.createElement('div');
+    errorBlock.innerHTML = `<p style="color: red">无法显示源代码: ${error.message}</p>`;
+    output.appendChild(errorBlock);
+  }
+}
+
+/**
+ * HTML转义，防止XSS
+ */
+function escapeHtml(html: string): string {
+  return html
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
 /**
  * 页面加载后执行
@@ -24,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const output = document.getElementById('output');
             if (output) {
                 testLRUCache(output);
+                showSourceCode(output, SOURCE_CODE_KEYS.LRUCache);
             }
         });
     }
@@ -35,6 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const output = document.getElementById('output');
             if (output) {
                 testTreeTraversal(output);
+                showSourceCode(output, SOURCE_CODE_KEYS.TreeNode);
             }
         });
     }
@@ -47,6 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const output = document.getElementById('output');
             if (output) {
                 testLongestIncreasingSubsequence(output);
+                showSourceCode(output, SOURCE_CODE_KEYS.LIS);
             }
         });
     }
@@ -59,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const output = document.getElementById('output');
             if (output) {
                 testConstructors(output);
+                showSourceCode(output, SOURCE_CODE_KEYS.Constructor);
             }
         });
     }
@@ -71,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const output = document.getElementById('output');
             if (output) {
                 testCurry(output);
+                showSourceCode(output, SOURCE_CODE_KEYS.Curry);
             }
         });
     }

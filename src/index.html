@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TypeScript/JavaScript 学习</title>
-    <link rel="stylesheet" href="style.css">
+    <!-- 直接内联CSS -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,19 +12,110 @@
             padding: 20px;
             background-color: #f4f4f4;
         }
+        
         .container {
-            max-width: 800px;
+            max-width: 1400px;
+            width: 95%;
             margin: 0 auto;
             background-color: white;
             padding: 20px;
-            border-radius: 5px;
+            border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
+        
         h1 {
             color: #333;
+            margin-top: 0;
         }
-         /* JavaScript测试相关样式 */
-         .js-test-area {
+        
+        /* 页面包装器 - 包含侧边栏和主内容区 */
+        .page-wrapper {
+            display: flex;
+            width: 100%;
+            margin-top: 20px;
+            min-height: 600px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        /* 左侧Tab栏 - OpenAI风格 */
+        .sidebar {
+            width: 260px;
+            min-width: 260px;
+            flex: 0 0 auto;
+            background-color: #f7f7f8;
+            border-right: 1px solid #e5e5e6;
+            overflow-y: auto;
+            position: relative;
+            z-index: 10;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            /* 确保高度与父元素一致 */
+            height: 100%;
+            min-height: 600px;
+        }
+        
+        /* 右侧主内容区 */
+        .main-content {
+            flex: 1;
+            background-color: white;
+            /* 确保高度与父元素一致 */
+            height: 100%;
+            min-height: 600px;
+        }
+        
+        #output {
+            background-color: #fff;
+            padding: 24px;
+            min-height: 600px;
+            overflow-y: auto;
+            border: none;
+            margin-top: 0;
+        }
+        
+        /* Tab组与导航 */
+        .tab-group {
+            margin: 12px 0;
+        }
+        
+        .category-title {
+            font-size: 12px;
+            color: #6e6e80;
+            padding: 12px 16px 8px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* 导航列表样式 */
+        .nav-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .tab-item {
+            padding: 8px 16px;
+            color: #353740;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-radius: 4px;
+            margin: 2px 8px;
+        }
+        
+        .tab-item:hover {
+            background-color: #ececf1;
+        }
+        
+        .tab-item.active {
+            background-color: #ececf1;
+            color: #000;
+            font-weight: 500;
+        }
+        
+        /* JavaScript测试相关样式 */
+        .js-test-area {
             margin-top: 20px;
             border: 1px solid #ddd;
             padding: 15px;
@@ -52,29 +143,38 @@
             overflow: auto;
         }
         
-        .demo-container {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #fff;
-            border: 1px solid #ddd;
-        }
-        
-        .js-created {
-            color: #0066cc;
-            font-weight: bold;
-        }
-        
-        .js-list {
-            margin: 10px 0;
-            padding-left: 20px;
-        }
-        #output {
-            background-color: #f8f8f8;
-            border: 1px solid #ddd;
+        /* 源代码显示 */
+        .source-code {
+            margin-top: 30px;
             padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f8f8f8;
+        }
+        
+        .source-code h3 {
+            margin-top: 0;
+            color: #0066cc;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .source-code pre {
+            margin: 0;
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid #eee;
             border-radius: 4px;
-            margin-top: 20px;
-            min-height: 200px;
+            overflow: auto;
+            max-height: 400px;
+        }
+        
+        .source-code code {
+            font-family: Consolas, Monaco, 'Andale Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333;
         }
     </style>
 </head>
@@ -83,24 +183,43 @@
         <h1>TypeScript/JavaScript 学习和调试</h1>
         <p>打开控制台（F12）查看更多输出</p>
         
-        <div class="button-group">
-            <h3>基础测试</h3>
-            <button id="testConstructorButton">测试JS构造函数</button>
-            <button id="testCurryButton">测试柯里化函数</button>
+        <!-- 页面两栏布局 -->
+        <div class="page-wrapper">
+            <!-- 左侧导航栏 -->
+            <div class="sidebar" id="sidebar">
+                <div class="tab-group">
+                    <div class="category-title">基础测试</div>
+                    <ul class="nav-list">
+                        <li class="tab-item" id="testConstructorButton">测试JS构造函数</li>
+                        <li class="tab-item" id="testCurryButton">测试柯里化函数</li>
+                    </ul>
+                </div>
+                
+                <div class="tab-group">
+                    <div class="category-title">数据结构测试</div>
+                    <ul class="nav-list">
+                        <li class="tab-item" id="testLRUButton">测试LRU缓存</li>
+                        <li class="tab-item" id="testTreeButton">测试二叉树遍历</li>
+                    </ul>
+                </div>
+                
+                <div class="tab-group">
+                    <div class="category-title">算法测试</div>
+                    <ul class="nav-list">
+                        <li class="tab-item" id="testLISButton">测试最长递增子序列</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- 右侧主内容区 -->
+            <div class="main-content">
+                <div id="output">
+                    <p>应用已启动。点击左侧菜单选择要运行的测试。</p>
+                </div>
+            </div>
         </div>
-
-        <div class="button-group">
-            <h3>数据结构测试</h3>
-            <button id="testLRUButton">测试LRU缓存</button>
-            <button id="testTreeButton">测试二叉树遍历</button>
-        </div>
-
-        <div class="button-group">
-            <h3>算法测试</h3>
-            <button id="testLISButton">测试最长递增子序列</button>
-        </div>
-        
-        <div id="output"></div>
     </div>
+    
+    <!-- 脚本由webpack注入 -->
 </body>
 </html>

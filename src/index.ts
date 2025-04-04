@@ -1,10 +1,12 @@
-import { example } from './example';
 import { testLRUCache } from './tests/lruTest';
 import { testTreeTraversal } from './tests/treeTest';
 import { testLongestIncreasingSubsequence } from './tests/lisTest';
 import { testConstructors } from './tests/constructorTest';
 import { testCurry } from './tests/curryTest';
 import { sourceCodeMap } from './sourceCodes';
+
+// 直接导入相对路径的CSS
+// import '../public/css/style.css'; // 删除CSS导入
 
 // 源码文件类型映射
 const SOURCE_CODE_KEYS = {
@@ -56,6 +58,46 @@ function escapeHtml(html: string): string {
 }
 
 /**
+ * 初始化侧边栏功能 - 移除折叠逻辑
+ */
+function initSidebar(): void {
+  const sidebar = document.getElementById('sidebar');
+  
+  if (sidebar) {
+    // 确保侧边栏始终展开
+    sidebar.classList.remove('collapsed');
+    
+    // 清除之前保存的折叠状态
+    localStorage.removeItem('sidebarCollapsed');
+  }
+}
+
+/**
+ * 初始化导航列表项交互
+ */
+function initNavItems(): void {
+  const tabItems = document.querySelectorAll('.tab-item');
+  
+  tabItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault(); // 阻止默认行为
+      
+      // 移除所有项目的active状态
+      tabItems.forEach(i => i.classList.remove('active'));
+      
+      // 添加当前项目的active状态
+      item.classList.add('active');
+      
+      // 确保侧边栏可见
+      const sidebar = document.getElementById('sidebar');
+      if (sidebar) {
+        sidebar.classList.remove('collapsed');
+      }
+    });
+  });
+}
+
+/**
  * 页面加载后执行
  */
 document.addEventListener('DOMContentLoaded', () => {
@@ -63,8 +105,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const outputDiv = document.getElementById('output');
     if (outputDiv) {
-        outputDiv.innerHTML = '<p>应用已启动。点击按钮运行测试。</p>';
+        outputDiv.innerHTML = '<p>应用已启动。点击左侧菜单选择要运行的测试。</p>';
     }
+    
+    // 初始化侧边栏功能
+    initSidebar();
+    // 初始化导航列表项交互
+    initNavItems();
     
     // 数据结构测试按钮
     const testLRUButton = document.getElementById('testLRUButton');

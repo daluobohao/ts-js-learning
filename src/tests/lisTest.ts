@@ -1,68 +1,7 @@
 /**
  * 最长递增子序列测试文件
  */
-
-/**
- * 求最长递增子序列的长度
- * @param nums 输入数组
- * @returns 最长递增子序列的长度
- */
-function lengthOfLIS(nums: number[]): number {
-  if (nums.length === 0) return 0;
-  
-  // dp[i]表示以nums[i]结尾的最长递增子序列的长度
-  const dp: number[] = Array(nums.length).fill(1);
-  
-  // 计算每个位置的最长递增子序列长度
-  for (let i = 1; i < nums.length; i++) {
-    for (let j = 0; j < i; j++) {
-      if (nums[i] > nums[j]) {
-        dp[i] = Math.max(dp[i], dp[j] + 1);
-      }
-    }
-  }
-  
-  // 找到dp数组中的最大值
-  return Math.max(...dp);
-}
-
-/**
- * 求最长递增子序列（二分查找优化）
- * 时间复杂度：O(n log n)
- * @param nums 输入数组
- * @returns 最长递增子序列长度
- */
-function lengthOfLISOptimized(nums: number[]): number {
-  if (nums.length === 0) return 0;
-  
-  // 用于存储当前找到的最长递增子序列
-  const tails: number[] = [];
-  
-  for (const num of nums) {
-    // 二分查找num应该插入的位置
-    let left = 0;
-    let right = tails.length;
-    
-    while (left < right) {
-      const mid = Math.floor((left + right) / 2);
-      if (tails[mid] < num) {
-        left = mid + 1;
-      } else {
-        right = mid;
-      }
-    }
-    
-    // 如果找到了合适的位置，更新tails数组
-    if (left === tails.length) {
-      tails.push(num);
-    } else {
-      tails[left] = num;
-    }
-  }
-  
-  // tails数组的长度就是最长递增子序列的长度
-  return tails.length;
-}
+import { lengthOfLIS, lengthOfLISOptimized, findLIS } from '../algorithms/longestIncreasingSubsequence';
 
 /**
  * 测试最长递增子序列算法
@@ -119,8 +58,23 @@ export function testLongestIncreasingSubsequence(outputElement: HTMLElement): vo
     <p>解释: 使用贪心策略和二分查找，维护一个递增序列tails</p>
   `;
   
+  // 测试3: 查找具体子序列
+  const test3 = createTestResult('查找具体的最长递增子序列');
+  
+  output = "";
+  testCases.forEach(tc => {
+    const result = findLIS(tc.array);
+    output += `${tc.name}: 数组 [${tc.array.join(', ')}] 的LIS为 [${result.join(', ')}]<br>`;
+  });
+  
+  test3.innerHTML += `
+    <p>查找最长递增子序列的具体序列:</p>
+    <pre>${output}</pre>
+    <p>解释: 使用动态规划和回溯构造出最长递增子序列</p>
+  `;
+  
   // 性能比较
-  const test3 = createTestResult('性能比较');
+  const test4 = createTestResult('性能比较');
   
   const largeArray = Array.from({length: 1000}, () => Math.floor(Math.random() * 10000));
   
@@ -134,7 +88,7 @@ export function testLongestIncreasingSubsequence(outputElement: HTMLElement): vo
   const binaryResult = lengthOfLISOptimized(largeArray);
   const binaryEnd = performance.now();
   
-  test3.innerHTML += `
+  test4.innerHTML += `
     <p>在1000个随机元素的数组上的性能比较:</p>
     <pre>
 动态规划方法 (O(n²)):

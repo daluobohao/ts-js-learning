@@ -5,7 +5,10 @@
 
 export const sourceCodeMap: Record<string, string> = {
   // LRU缓存实现源码
-  'LRUCache': `class LRUNode {
+  'LRUCache': `/**
+ * LRU缓存节点
+ */
+export class LRUNode {
   key: number;
   value: number;
   prev: LRUNode | null = null;
@@ -17,7 +20,11 @@ export const sourceCodeMap: Record<string, string> = {
   }
 }
 
-class LRUCache {
+/**
+ * LRU缓存实现
+ * 使用哈希表 + 双向链表
+ */
+export class LRUCache {
   private capacity: number;
   private cache: Map<number, LRUNode>;
   private head: LRUNode;
@@ -86,110 +93,191 @@ class LRUCache {
     this.removeNode(res);
     return res;
   }
+  
+  toString(): string {
+    const elements: string[] = [];
+    let current = this.head.next;
+    
+    while (current !== this.tail) {
+      elements.push(\`\${current!.key}:\${current!.value}\`);
+      current = current!.next;
+    }
+    
+    return \`[\${elements.join(', ')}]\`;
+  }
 }`,
-
+  
   // 二叉树节点及遍历源码
-  'TreeNode': `class TreeNode {
-  val: number;
-  left: TreeNode | null;
-  right: TreeNode | null;
-
-  constructor(val: number = 0, left: TreeNode | null = null, right: TreeNode | null = null) {
+  'TreeNode': `/**
+ * 二叉树节点
+ */
+export class TreeNode<T> {
+  val: T;
+  left: TreeNode<T> | null = null;
+  right: TreeNode<T> | null = null;
+  
+  constructor(val: T) {
     this.val = val;
-    this.left = left;
-    this.right = right;
   }
 }
 
-// 前序遍历：根-左-右
-function preorderTraversal(root: TreeNode | null): number[] {
-  const result: number[] = [];
+/**
+ * 二叉树实现
+ */
+export class BinaryTree<T> {
+  root: TreeNode<T> | null = null;
   
-  function traverse(node: TreeNode | null) {
-    if (node === null) return;
+  /**
+   * 从数组创建二叉树
+   * 按照层级顺序插入元素，null表示空节点
+   * @param values 值数组
+   */
+  static fromArray<T>(values: (T | null)[]): BinaryTree<T> {
+    if (!values.length) return new BinaryTree<T>();
     
-    // 先访问根节点
-    result.push(node.val);
-    // 然后遍历左子树
-    traverse(node.left);
-    // 最后遍历右子树
-    traverse(node.right);
-  }
-  
-  traverse(root);
-  return result;
-}
-
-// 中序遍历：左-根-右
-function inorderTraversal(root: TreeNode | null): number[] {
-  const result: number[] = [];
-  
-  function traverse(node: TreeNode | null) {
-    if (node === null) return;
+    const tree = new BinaryTree<T>();
+    tree.root = new TreeNode(values[0] as T);
     
-    // 先遍历左子树
-    traverse(node.left);
-    // 然后访问根节点
-    result.push(node.val);
-    // 最后遍历右子树
-    traverse(node.right);
-  }
-  
-  traverse(root);
-  return result;
-}
-
-// 后序遍历：左-右-根
-function postorderTraversal(root: TreeNode | null): number[] {
-  const result: number[] = [];
-  
-  function traverse(node: TreeNode | null) {
-    if (node === null) return;
+    const queue: TreeNode<T>[] = [tree.root];
+    let i = 1;
     
-    // 先遍历左子树
-    traverse(node.left);
-    // 然后遍历右子树
-    traverse(node.right);
-    // 最后访问根节点
-    result.push(node.val);
-  }
-  
-  traverse(root);
-  return result;
-}
-
-// 层序遍历(BFS)
-function levelOrder(root: TreeNode | null): number[][] {
-  if (!root) return [];
-  
-  const result: number[][] = [];
-  const queue: TreeNode[] = [root];
-  
-  while (queue.length > 0) {
-    const levelSize = queue.length;
-    const currentLevel: number[] = [];
-    
-    for (let i = 0; i < levelSize; i++) {
+    while (i < values.length) {
       const node = queue.shift()!;
-      currentLevel.push(node.val);
+      
+      // 处理左子节点
+      if (i < values.length) {
+        const leftVal = values[i++];
+        if (leftVal !== null) {
+          node.left = new TreeNode(leftVal);
+          queue.push(node.left);
+        }
+      }
+      
+      // 处理右子节点
+      if (i < values.length) {
+        const rightVal = values[i++];
+        if (rightVal !== null) {
+          node.right = new TreeNode(rightVal);
+          queue.push(node.right);
+        }
+      }
+    }
+    
+    return tree;
+  }
+  
+  /**
+   * 前序遍历 (根-左-右)
+   */
+  preOrder(): T[] {
+    const result: T[] = [];
+    
+    function traverse(node: TreeNode<T> | null): void {
+      if (!node) return;
+      
+      result.push(node.val);
+      traverse(node.left);
+      traverse(node.right);
+    }
+    
+    traverse(this.root);
+    return result;
+  }
+  
+  /**
+   * 中序遍历 (左-根-右)
+   */
+  inOrder(): T[] {
+    const result: T[] = [];
+    
+    function traverse(node: TreeNode<T> | null): void {
+      if (!node) return;
+      
+      traverse(node.left);
+      result.push(node.val);
+      traverse(node.right);
+    }
+    
+    traverse(this.root);
+    return result;
+  }
+  
+  /**
+   * 后序遍历 (左-右-根)
+   */
+  postOrder(): T[] {
+    const result: T[] = [];
+    
+    function traverse(node: TreeNode<T> | null): void {
+      if (!node) return;
+      
+      traverse(node.left);
+      traverse(node.right);
+      result.push(node.val);
+    }
+    
+    traverse(this.root);
+    return result;
+  }
+  
+  /**
+   * 层序遍历
+   */
+  levelOrder(): T[] {
+    if (!this.root) return [];
+    
+    const result: T[] = [];
+    const queue: TreeNode<T>[] = [this.root];
+    
+    while (queue.length > 0) {
+      const node = queue.shift()!;
+      result.push(node.val);
       
       if (node.left) queue.push(node.left);
       if (node.right) queue.push(node.right);
     }
     
-    result.push(currentLevel);
+    return result;
   }
   
-  return result;
+  /**
+   * 计算树的高度
+   */
+  height(): number {
+    function getHeight(node: TreeNode<T> | null): number {
+      if (!node) return 0;
+      
+      const leftHeight = getHeight(node.left);
+      const rightHeight = getHeight(node.right);
+      
+      return Math.max(leftHeight, rightHeight) + 1;
+    }
+    
+    return getHeight(this.root);
+  }
+  
+  /**
+   * 获取树中的节点数量
+   */
+  size(): number {
+    function countNodes(node: TreeNode<T> | null): number {
+      if (!node) return 0;
+      return countNodes(node.left) + countNodes(node.right) + 1;
+    }
+    
+    return countNodes(this.root);
+  }
 }`,
-
+  
   // 最长递增子序列算法源码
   'LIS': `/**
- * 求最长递增子序列的长度
+ * 求最长递增子序列的长度 - 动态规划方法
+ * 时间复杂度: O(n²)
+ * 空间复杂度: O(n)
  * @param nums 输入数组
  * @returns 最长递增子序列的长度
  */
-function lengthOfLIS(nums: number[]): number {
+export function lengthOfLIS(nums: number[]): number {
   if (nums.length === 0) return 0;
   
   // dp[i]表示以nums[i]结尾的最长递增子序列的长度
@@ -209,12 +297,13 @@ function lengthOfLIS(nums: number[]): number {
 }
 
 /**
- * 求最长递增子序列（二分查找优化）
- * 时间复杂度：O(n log n)
+ * 求最长递增子序列（二分查找优化方法）
+ * 时间复杂度: O(n log n)
+ * 空间复杂度: O(n)
  * @param nums 输入数组
  * @returns 最长递增子序列长度
  */
-function lengthOfLISOptimized(nums: number[]): number {
+export function lengthOfLISOptimized(nums: number[]): number {
   if (nums.length === 0) return 0;
   
   // 用于存储当前找到的最长递增子序列
@@ -244,28 +333,76 @@ function lengthOfLISOptimized(nums: number[]): number {
   
   // tails数组的长度就是最长递增子序列的长度
   return tails.length;
-}`,
+}
 
+/**
+ * 求最长递增子序列的具体序列
+ * @param nums 输入数组
+ * @returns 最长递增子序列
+ */
+export function findLIS(nums: number[]): number[] {
+  if (nums.length === 0) return [];
+  
+  // dp[i]表示以nums[i]结尾的最长递增子序列的长度
+  const dp: number[] = Array(nums.length).fill(1);
+  // prev[i]表示nums[i]前面的那个元素的索引
+  const prev: number[] = Array(nums.length).fill(-1);
+  
+  let maxLen = 1;
+  let maxIndex = 0;
+  
+  // 计算每个位置的最长递增子序列长度
+  for (let i = 1; i < nums.length; i++) {
+    for (let j = 0; j < i; j++) {
+      if (nums[i] > nums[j] && dp[j] + 1 > dp[i]) {
+        dp[i] = dp[j] + 1;
+        prev[i] = j;
+      }
+    }
+    
+    if (dp[i] > maxLen) {
+      maxLen = dp[i];
+      maxIndex = i;
+    }
+  }
+  
+  // 根据prev数组回溯构造最长递增子序列
+  const result: number[] = [];
+  while (maxIndex !== -1) {
+    result.unshift(nums[maxIndex]);
+    maxIndex = prev[maxIndex];
+  }
+  
+  return result;
+}`,
+  
   // JS构造函数测试源码
-  'Constructor': `// 传统构造函数方式
-function Person(name, age) {
+  'Constructor': `/**
+ * JavaScript构造函数示例
+ */
+
+// 传统构造函数
+export function Person(this: any, name: string, age: number) {
   this.name = name;
   this.age = age;
   
-  // 缺点：每次实例化都会创建一个新的方法
+  // 方法在每个实例中创建
   this.sayHello = function() {
     return \`Hello, my name is \${this.name}\`;
   };
 }
 
-// 原型方法 - 解决方法复用问题
-Person.prototype.greet = function() {
+// 原型方法
+Person.prototype.greet = function(this: any) {
   return \`Hi, I'm \${this.name} and I'm \${this.age} years old\`;
 };
 
 // ES6 类语法
-class Animal {
-  constructor(name, species) {
+export class Animal {
+  name: string;
+  species: string;
+  
+  constructor(name: string, species: string) {
     this.name = name;
     this.species = species;
   }
@@ -276,14 +413,16 @@ class Animal {
   }
   
   // 静态方法
-  static isAnimal(obj) {
+  static isAnimal(obj: any) {
     return obj instanceof Animal;
   }
 }
 
 // 继承
-class Dog extends Animal {
-  constructor(name, breed) {
+export class Dog extends Animal {
+  breed: string;
+  
+  constructor(name: string, breed: string) {
     super(name, 'canine');
     this.breed = breed;
   }
@@ -298,27 +437,56 @@ class Dog extends Animal {
     return \`\${this.name} fetches the ball\`;
   }
 }`,
-
+  
   // 柯里化函数源码
   'Curry': `/**
+ * 柯里化函数实现
+ */
+
+/**
+ * 柯里化函数类型定义
+ */
+export type CurryFunction<T extends any[], R> = T extends [any, ...infer U]
+    ? (arg: T[0]) => U extends []
+        ? R
+        : CurryFunction<U, R>
+    : R;
+
+/**
+ * 柯里化函数实现
+ * 将接受多个参数的函数转换为一系列接受单个参数的函数
+ */
+export function curry<T extends any[], R>(fn: (...args: T) => R, arity = fn.length): CurryFunction<T, R> {
+    return (function nextCurried(prevArgs: any[]) {
+        return function curried(nextArg: any) {
+            const args = [...prevArgs, nextArg];
+            if (args.length >= arity) {
+                return fn(...(args as T));
+            }
+            return nextCurried(args);
+        };
+    })([]) as CurryFunction<T, R>;
+}
+
+/**
  * 简单的柯里化函数实现
  * @param fn 要柯里化的函数
  * @returns 柯里化后的函数
  */
-function curry(fn) {
-  const arity = fn.length;
-  
-  return function curried(...args) {
-    // 如果传入的参数数量足够，直接调用原函数
-    if (args.length >= arity) {
-      return fn.apply(this, args);
-    }
+export function simpleCurry<T extends (...args: any[]) => any>(fn: T): any {
+    const arity = fn.length;
     
-    // 否则返回一个新函数，等待更多参数
-    return function(...moreArgs) {
-      return curried.apply(this, [...args, ...moreArgs]);
+    return function curried(this: unknown, ...args: any[]): any {
+        // 如果传入的参数数量足够，直接调用原函数
+        if (args.length >= arity) {
+            return fn(...args);
+        }
+        
+        // 否则返回一个新函数，等待更多参数
+        return function(this: unknown, ...moreArgs: any[]): any {
+            return curried(...[...args, ...moreArgs]);
+        };
     };
-  };
 }
 
 /**
@@ -327,39 +495,46 @@ function curry(fn) {
  * @param placeholder 占位符
  * @returns 柯里化后的函数
  */
-function advancedCurry(fn, placeholder = '_') {
-  const arity = fn.length;
-  
-  return function curried(...args) {
-    // 检查是否有足够的非占位符参数
-    const hasPlaceholder = args.some(arg => arg === placeholder);
-    const nonPlaceholders = args.filter(arg => arg !== placeholder).length;
+export function advancedCurry<T extends (...args: any[]) => any>(fn: T, placeholder = '_'): any {
+    const arity = fn.length;
     
-    if (!hasPlaceholder && nonPlaceholders >= arity) {
-      return fn.apply(this, args);
-    }
-    
-    return function(...moreArgs) {
-      // 将新参数填充到占位符位置
-      const mergedArgs = args.map(arg => 
-        arg === placeholder && moreArgs.length ? moreArgs.shift() : arg
-      );
-      
-      // 添加剩余的新参数
-      return curried.apply(this, [...mergedArgs, ...moreArgs]);
+    return function curried(this: unknown, ...args: any[]): any {
+        // 检查是否有足够的非占位符参数
+        const hasPlaceholder = args.some(arg => arg === placeholder);
+        const nonPlaceholders = args.filter(arg => arg !== placeholder).length;
+        
+        if (!hasPlaceholder && nonPlaceholders >= arity) {
+            return fn(...args);
+        }
+        
+        return function(this: unknown, ...moreArgs: any[]): any {
+            // 将新参数填充到占位符位置
+            const mergedArgs = [...args];
+            let filledArgs: any[] = [];
+            
+            for (let i = 0; i < mergedArgs.length; i++) {
+                if (mergedArgs[i] === placeholder && moreArgs.length > 0) {
+                    filledArgs.push(moreArgs.shift());
+                } else {
+                    filledArgs.push(mergedArgs[i]);
+                }
+            }
+            
+            // 添加剩余的新参数
+            return curried(...[...filledArgs, ...moreArgs]);
+        };
     };
-  };
 }
 
 /**
  * 偏函数应用 - 柯里化的近亲
  * @param fn 要部分应用的函数
- * @param ...partialArgs 部分参数
+ * @param partialArgs 部分参数
  * @returns 新函数，等待剩余参数
  */
-function partial(fn, ...partialArgs) {
-  return function(...args) {
-    return fn.apply(this, [...partialArgs, ...args]);
-  };
+export function partial<T extends (...args: any[]) => any>(fn: T, ...partialArgs: any[]): any {
+    return function(this: unknown, ...args: any[]): any {
+        return fn(...[...partialArgs, ...args]);
+    };
 }`
 }; 

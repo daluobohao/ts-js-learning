@@ -1,43 +1,7 @@
 /**
  * 二叉树遍历测试文件
  */
-
-class TreeNode {
-  val: number;
-  left: TreeNode | null;
-  right: TreeNode | null;
-
-  constructor(val: number = 0, left: TreeNode | null = null, right: TreeNode | null = null) {
-    this.val = val;
-    this.left = left;
-    this.right = right;
-  }
-}
-
-// 层序遍历(BFS)
-function levelOrder(root: TreeNode | null): number[][] {
-  if (!root) return [];
-  
-  const result: number[][] = [];
-  const queue: TreeNode[] = [root];
-  
-  while (queue.length > 0) {
-    const levelSize = queue.length;
-    const currentLevel: number[] = [];
-    
-    for (let i = 0; i < levelSize; i++) {
-      const node = queue.shift()!;
-      currentLevel.push(node.val);
-      
-      if (node.left) queue.push(node.left);
-      if (node.right) queue.push(node.right);
-    }
-    
-    result.push(currentLevel);
-  }
-  
-  return result;
-}
+import { TreeNode, BinaryTree } from '../dataStructures/BinaryTree';
 
 /**
  * 测试二叉树遍历
@@ -62,16 +26,25 @@ export function testTreeTraversal(outputElement: HTMLElement): void {
   //     9  20
   //       /  \
   //      15   7
-  const root = new TreeNode(3, new TreeNode(9), new TreeNode(20, new TreeNode(15), new TreeNode(7)));
+  const root = new TreeNode(3);
+  root.left = new TreeNode(9);
+  root.right = new TreeNode(20);
+  root.right.left = new TreeNode(15);
+  root.right.right = new TreeNode(7);
+  
+  const tree = new BinaryTree<number>();
+  tree.root = root;
   
   // 测试1: 层序遍历
-  const test1 = createTestResult('层序遍历结果');
-  const levels = levelOrder(root);
+  const test1 = createTestResult('遍历测试');
   
   let output = "";
-  for (let i = 0; i < levels.length; i++) {
-    output += `第 ${i+1} 层: [${levels[i].join(', ')}]<br>`;
-  }
+  output += `前序遍历: [${tree.preOrder().join(', ')}]<br>`;
+  output += `中序遍历: [${tree.inOrder().join(', ')}]<br>`;
+  output += `后序遍历: [${tree.postOrder().join(', ')}]<br>`;
+  output += `层序遍历: [${tree.levelOrder().join(', ')}]<br>`;
+  output += `树高度: ${tree.height()}<br>`;
+  output += `节点数量: ${tree.size()}<br>`;
   
   // 创建树的可视化
   test1.innerHTML += `
@@ -84,9 +57,26 @@ export function testTreeTraversal(outputElement: HTMLElement): void {
         &nbsp;15&nbsp;7
       </code>
     </div>
-    <p>层序遍历结果:</p>
+    <p>遍历结果:</p>
     <pre>${output}</pre>
-    <p>完整结果: ${JSON.stringify(levels)}</p>
+  `;
+  
+  // 测试2: 从数组创建树
+  const test2 = createTestResult('从数组创建树');
+  
+  const values = [3, 9, 20, null, null, 15, 7];
+  const treeFromArray = BinaryTree.fromArray(values);
+  
+  output = "";
+  output += `输入数组: [${values.map(v => v === null ? 'null' : v).join(', ')}]<br>`;
+  output += `前序遍历: [${treeFromArray.preOrder().join(', ')}]<br>`;
+  output += `中序遍历: [${treeFromArray.inOrder().join(', ')}]<br>`;
+  output += `后序遍历: [${treeFromArray.postOrder().join(', ')}]<br>`;
+  output += `层序遍历: [${treeFromArray.levelOrder().join(', ')}]<br>`;
+  
+  test2.innerHTML += `
+    <p>从数组创建树:</p>
+    <pre>${output}</pre>
   `;
   
   outputElement.appendChild(results);

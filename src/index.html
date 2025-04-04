@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TypeScript/JavaScript 学习</title>
+    <link rel="stylesheet" href="style.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -81,8 +82,24 @@
     <div class="container">
         <h1>TypeScript/JavaScript 学习和调试</h1>
         <p>打开控制台（F12）查看更多输出</p>
-        <button id="testButton">运行TS测试</button>
-        <button id="testJsButton">运行JS测试</button>
+        
+        <div class="button-group">
+            <h3>基础测试</h3>
+            <button id="testConstructorButton">测试JS构造函数</button>
+            <button id="testCurryButton">测试柯里化函数</button>
+        </div>
+
+        <div class="button-group">
+            <h3>数据结构测试</h3>
+            <button id="testLRUButton">测试LRU缓存</button>
+            <button id="testTreeButton">测试二叉树遍历</button>
+        </div>
+
+        <div class="button-group">
+            <h3>算法测试</h3>
+            <button id="testLISButton">测试最长递增子序列</button>
+        </div>
+        
         <div id="output"></div>
     </div>
 </body>

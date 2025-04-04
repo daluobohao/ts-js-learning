@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   mode: 'development',
   entry: './src/index.ts',
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
@@ -36,6 +36,10 @@ module.exports = {
           }
         ],
       },
+      {
+        resourceQuery: /raw/,
+        type: 'asset/source'
+      }
     ],
   },
   plugins: [
@@ -48,6 +52,6 @@ module.exports = {
       directory: path.join(__dirname, 'dist'),
     },
     compress: true,
-    port: 9000,
+    port: 9001,
   },
 };

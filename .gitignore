@@ -1,0 +1,19 @@
+# 依赖目录
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# 构建产物
+/dist
+
+# IDE 和编辑器
+/.vscode
+/.idea
+
+# 操作系统相关
+.DS_Store
+
+# 源码映射文件
+*.map

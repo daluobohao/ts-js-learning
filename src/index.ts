@@ -176,7 +176,72 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // 新增dom元素测试
+    const testDom = document.getElementById("testDomAddButton");
+    if (testDom) {
+        testDom.addEventListener("click", () => {
+            clearOutput();
+            const output = document.getElementById("output");
+            if (output) {
+                const newElement = document.createElement("div");
+                newElement.id = "domContent"; // Assign an ID here
+                newElement.innerHTML = "<h3>新添加的DOM元素示例</h3><button id='domAdd'>点击新增dom</button>";
+                output.appendChild(newElement);
+
+                // 将 domAdd 的事件监听器移到这里
+                const domAdd = document.getElementById("domAdd");
+                if (domAdd) {
+                    domAdd.addEventListener("click", () => {
+                        const output = document.getElementById("output"); // 可以重新获取 output，或者确保它在作用域内
+                        if (output) {
+                            const newElement = document.createElement("div");
+                            newElement.innerHTML = "<h3>点击新添加的DOM元素</h3>";
+                      
+                            output.appendChild(newElement);
+                        }
+                    });
+                }
+                // showSourceCode(output, "testDom");
+            }
+        });
+    }
+
+    // 替换dom元素的测试
+    const testDomReplace = document.getElementById("testDomModifyButton");
+    if (testDomReplace) {
+        testDomReplace.addEventListener("click", () => {
+            clearOutput();
+            const output = document.getElementById("output");
+            if (output) {
+                const newElement = document.createElement("div");
+                newElement.id = "domContent"; // Assign an ID here
+                newElement.innerHTML = "<h3>新添加的DOM元素示例</h3><button id='domReplace'>点击替换dom</button>";
+                output.appendChild(newElement);
+
+                // 将 domReplace 的事件监听器移到这里
+                const domReplace = document.getElementById("domReplace");
+                if (domReplace) {
+                    domReplace.addEventListener("click", () => {
+                        const output = document.getElementById("output"); // 可以重新获取 output，或者确保它在作用域内
+                        if (output) {
+                            const newElement = document.createElement("div");
+                            newElement.innerHTML = "<h3>点击新替换的DOM元素</h3>";
+                      
+                            const oldElement = document.getElementById("domContent");
+                            if (oldElement) {
+                                output.replaceChild(newElement, oldElement);
+                            }
+                        }
+                    });
+                }
+                // showSourceCode(output, "testDom");
+            }
+        });
+    }
 });
+
+
 
 /**
  * 清空输出区域

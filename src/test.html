@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全新测试页面</title>
+    <style>
+        /* 测试页面专用样式，不共享全局样式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #e8f4ff;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.2);
+            border-top: 5px solid #3498db;
+        }
+        h1 {
+            color: #3498db;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .content {
+            margin-top: 20px;
+        }
+        #output {
+            margin-top: 15px;
+            padding: 20px;
+            background-color: #f0f8ff;
+            border: 1px solid #c8e1ff;
+            border-radius: 5px;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            color: #2980b9;
+            text-decoration: none;
+            padding: 8px 16px;
+            background-color: #e8f4ff;
+            border-radius: 4px;
+            border: 1px solid #c8e1ff;
+        }
+        a:hover {
+            background-color: #c8e1ff;
+        }
+        .version {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <!-- 测试页面结构：只有一个简单的容器，不包含任何侧边栏或页面包装器 -->
+    <div class="container">
+        <h1>全新的测试页面3</h1>
+        <p>这是通过 webpack 动态生成的测试页面，样式已完全重新设计，与首页截然不同</p>
+        
+        <div class="content">
+            <div id="output">这里显示测试结果</div>
+        </div>
+        
+        <a href="/">返回首页</a>
+        
+        <div class="version">版本: 2.0.0 - 最后更新: 2023年11月</div>
+    </div>
+</body>
+</html> 

@@ -177,6 +177,39 @@
             color: #333;
         }
     </style>
+    
+    <!-- 内联 JavaScript 来处理导航事件 -->
+    <script>
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('内联脚本：DOM 已加载完成');
+            
+            // 获取所有导航项
+            const navItems = document.querySelectorAll('.tab-item');
+            console.log('内联脚本：找到导航项数量:', navItems.length);
+            
+            // 为每个导航项添加点击事件
+            navItems.forEach(function(item) {
+                item.addEventListener('click', function() {
+                    console.log('内联脚本：点击了导航项:', item.id);
+                    
+                    // 移除所有项目的 active 状态
+                    navItems.forEach(function(nav) {
+                        nav.classList.remove('active');
+                    });
+                    
+                    // 添加当前项目的 active 状态
+                    item.classList.add('active');
+                    
+                    // 获取ID
+                    const id = item.id;
+                    
+                    // 触发自定义事件，让 TypeScript 代码处理具体功能
+                    document.dispatchEvent(new CustomEvent('navAction', { detail: { id: id } }));
+                });
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="container">

@@ -1,6 +1,6 @@
 // 导入首页样式
 import './style.css';
-import { initIndexPage } from './pages/index';
+import { getIndexInitializer, getNavActionListener } from './pages/index';
 
 // 获取当前页面的路径
 const currentPath = window.location.pathname;
@@ -17,14 +17,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // 根据页面名称执行不同的逻辑
     switch (pageName) {
         case 'index':
-            // 首页逻辑
-            console.log('初始化首页...');
-            initIndexPage();
-            break;
         case '':
-            // 根路径也初始化首页
-            console.log('初始化首页 (根路径)...');
-            initIndexPage();
+            // 首页逻辑 - 使用函数库中的方法
+            console.log('初始化首页...');
+            
+            // 获取并执行首页初始化函数
+            const indexInitializer = getIndexInitializer();
+            indexInitializer();
+            
+            // 获取并添加导航事件监听器
+            const navActionListener = getNavActionListener();
+            document.addEventListener('navAction', navActionListener);
+            
             break;
         default:
             // 默认逻辑不做任何事情

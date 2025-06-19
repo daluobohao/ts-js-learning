@@ -1,5 +1,5 @@
-// 导入首页样式
-import '../style.css';
+// 导入首页样式（但不在此处应用，由main.ts导入）
+// import '../style.css'; // 样式由main.ts统一导入
 
 import { testLRUCache } from '../tests/lruTest';
 import { testTreeTraversal } from '../tests/treeTest';
@@ -9,7 +9,7 @@ import { testCurry } from '../tests/curryTest';
 import { sourceCodeMap } from '../sourceCodes';
 
 // 源码文件类型映射
-const SOURCE_CODE_KEYS = {
+export const SOURCE_CODE_KEYS = {
   'LRUCache': 'LRUCache',
   'TreeNode': 'TreeNode',
   'LIS': 'LIS',
@@ -20,7 +20,7 @@ const SOURCE_CODE_KEYS = {
 /**
  * 显示源代码到输出区域
  */
-function showSourceCode(output: HTMLElement, sourceKey: string): void {
+export function showSourceCode(output: HTMLElement, sourceKey: string): void {
   try {
     const code = sourceCodeMap[sourceKey];
     if (!code) {
@@ -46,7 +46,7 @@ function showSourceCode(output: HTMLElement, sourceKey: string): void {
 /**
  * HTML转义，防止XSS
  */
-function escapeHtml(html: string): string {
+export function escapeHtml(html: string): string {
   return html
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -58,7 +58,7 @@ function escapeHtml(html: string): string {
 /**
  * 初始化侧边栏功能
  */
-function initSidebar(): void {
+export function initSidebar(): void {
   const sidebar = document.getElementById('sidebar');
   if (sidebar) {
     sidebar.classList.remove('collapsed');
@@ -69,7 +69,7 @@ function initSidebar(): void {
 /**
  * 清除输出区域
  */
-function clearOutput(): void {
+export function clearOutput(): void {
   const output = document.getElementById('output');
   if (output) {
     output.innerHTML = '';
@@ -79,7 +79,7 @@ function clearOutput(): void {
 /**
  * 处理导航操作
  */
-function handleNavAction(id: string): void {
+export function handleNavAction(id: string): void {
   console.log('处理导航操作:', id);
   
   clearOutput();
@@ -148,26 +148,34 @@ function handleNavAction(id: string): void {
 }
 
 /**
- * 初始化首页
+ * 获取首页页面初始化函数
+ * 返回一个可供外部调用的初始化函数
  */
-export function initIndexPage(): void {
-    console.log('开始初始化首页...');
-    
-    const outputDiv = document.getElementById('output');
-    console.log('输出区域元素:', outputDiv);
-    if (outputDiv) {
-        outputDiv.innerHTML = '<p>应用已启动。点击左侧菜单选择要运行的测试。</p>';
-    }
-    
-    // 初始化侧边栏功能
-    initSidebar();
-    
-    // 监听自定义事件
-    document.addEventListener('navAction', (event: Event) => {
+export function getIndexInitializer(): () => void {
+    return function() {
+        console.log('开始初始化首页...');
+        
+        const outputDiv = document.getElementById('output');
+        console.log('输出区域元素:', outputDiv);
+        if (outputDiv) {
+            outputDiv.innerHTML = '<p>应用已启动。点击左侧菜单选择要运行的测试。</p>';
+        }
+        
+        // 初始化侧边栏功能
+        initSidebar();
+    };
+}
+
+/**
+ * 获取导航事件监听器
+ * 返回一个可供外部调用的事件监听函数
+ */
+export function getNavActionListener(): (event: Event) => void {
+    return function(event: Event) {
         // 将事件转换为CustomEvent以访问detail属性
         const customEvent = event as CustomEvent;
         if (customEvent.detail && customEvent.detail.id) {
             handleNavAction(customEvent.detail.id);
         }
-    });
+    };
 } 

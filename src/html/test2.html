@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>轮播图页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        .page-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+        header {
+            background-color: #4a6fa5;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }
+        main {
+            background-color: white;
+            padding: 30px;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        p {
+            line-height: 1.6;
+        }
+        .carousel {
+            position: relative;
+            width: 600px;
+            overflow: hidden;
+        }
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease;
+        }
+        .carousel-item {
+            width: 600px;
+            flex-shrink: 0;
+        }
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .prev {
+            left: 10px;
+        }
+        .next {
+            right: 10px;
+        }
+        .dots {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin: 0 5px;
+            background: gray;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .dot.active {
+            background: black;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-container">
+        <header>
+            <h1>轮播图页面</h1>
+        </header>
+        
+        <main>
+            <p>这是一个全新的测试页面，不共享任何组件，独立的页面结构和样式。</p>
+            <p>这个页面不应该有侧边栏或其他主页组件。如果有的话，表示配置有问题。</p>
+            
+            <div class="carousel">
+                <div class="carousel-track">
+                    <img src="https://picsum.photos/600/290" alt="图片3" class="carousel-item">
+                    <img src="https://picsum.photos/600/300" alt="图片1" class="carousel-item">
+                    <img src="https://picsum.photos/600/340" alt="图片2" class="carousel-item">
+                    <img src="https://picsum.photos/600/290" alt="图片3" class="carousel-item">
+                    <img src="https://picsum.photos/600/300" alt="图片1" class="carousel-item">
+
+
+                </div>
+            
+                <button class="prev">上一张</button>
+                <button class="next">下一张</button>
+                <div class="dots">
+                    <span data-index="1" class="dot active"></span>
+                    <span data-index="2" class="dot"></span>
+                    <span data-index="3" class="dot"></span>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+<script>
+    const track = document.querySelector('.carousel-track');
+    const items = document.querySelectorAll('.carousel-item');
+    const prevButton = document.querySelector('.prev');
+    const nextButton = document.querySelector('.next');
+    const dots = document.querySelectorAll('.dot');
+
+    let currentIndex = 1; // 从真正的第一张图片开始
+    const itemWidth = items[0].offsetWidth;
+    let timer = setInterval(moveToNext, 3000);
+
+    // 初始化位置
+    track.style.transform = `translateX(-${currentIndex * itemWidth}px)`;
+    
+    function updateSlide() {
+        track.style.transform = `translateX(-${currentIndex * itemWidth}px)`;
+        
+        // 更新指示点 - 考虑到实际只有3张不同的图片
+        document.querySelector('.dot.active').classList.remove('active');
+        // 将当前索引转换为点索引（0,1,2,3,4 => 0,1,2）
+        const dotIndex = (currentIndex === 0) ? 2 : ((currentIndex === 4) ? 0 : currentIndex - 1);
+        dots[dotIndex].classList.add('active');
+    }
+    function moveToNext() {
+        currentIndex = (currentIndex + 1) % items.length;
+        updateSlide();
+    }
+    function moveToPrev() {
+        currentIndex = (currentIndex - 1 + items.length) % items.length;
+        updateSlide();
+    }
+    nextButton.addEventListener('click', () => {
+        moveToNext();
+        resetTimer();
+    });
+
+    prevButton.addEventListener('click', () => {
+        moveToPrev();
+        resetTimer();
+    });
+
+    dots.forEach(dot => {
+        dot.addEventListener('click', e => {
+            currentIndex = parseInt(e.target.dataset.index);
+            updateSlide();
+            resetTimer();
+        });
+    });
+
+    function resetTimer() {
+        clearInterval(timer);
+        timer = setInterval(moveToNext, 3000);
+    }
+    track.addEventListener('transitionend', () => {
+        if (currentIndex === 0) {
+            // 到了第一个克隆（最后一张的克隆），跳转到真正的最后一张
+            track.style.transition = 'none';
+            currentIndex = 3; // 即真正的最后一张
+            track.style.transform = `translateX(-${itemWidth * currentIndex}px)`;
+            setTimeout(() => {
+                track.style.transition = 'transform 0.5s ease';
+            }, 10);
+        } else if (currentIndex === 4) {
+            // 到了最后一个克隆（第一张的克隆），跳转回真正的第一张
+            track.style.transition = 'none';
+            currentIndex = 1; // 即真正的第一张
+            track.style.transform = `translateX(-${itemWidth * currentIndex}px)`;
+            setTimeout(() => {
+                track.style.transition = 'transform 0.5s ease';
+            }, 10);
+        }
+    });
+</script>
+</html> 

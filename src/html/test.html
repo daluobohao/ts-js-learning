@@ -72,4 +72,19 @@
         <div class="version">版本: 2.0.0 - 最后更新: 2023年11月</div>
     </div>
 </body>
+<script>
+    function add(a, b, c) {
+        return a + b + c;
+    }
+    const partial = (fn, ...prevArgs) => (...laterArgs) => fn(...prevArgs, ...laterArgs);
+    const partialAdd = partial(add, 2, 3);
+    const laterAdd = partialAdd(4);
+    console.log('laterAdd:', laterAdd);
+    const arr = [1,2,3, 4, 5];
+    const newArr = arr.reduce((acc, curr, index, array) => {
+        console.log('reduce:', acc, '--', curr, '--', index, array);
+        return acc + curr;
+    })
+    console.log('newArr', newArr, arr);
+</script>
 </html> 
